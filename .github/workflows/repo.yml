@@ -31,21 +31,6 @@ jobs:
           echo REPO_OWNER="$(echo "${GITHUB_REPOSITORY}" | cut -d/ -f1)" >> $GITHUB_ENV
           echo REPO_NAME="$(echo "${GITHUB_REPOSITORY}" | cut -d/ -f2)" >> $GITHUB_ENV
 
-      - name: Import GPG key
-        id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.PRIVATE_SIGNING_KEY }}
-
-      - name: Confirm GPG Key loaded
-        run: |
-          gpg --list-keys
-          echo "${{ steps.import_gpg.outputs.fingerprint }}"
-
-      - name: Delete existing deb directory
-        run: rm -rf deb
-
-      # 这两步被删除：Build DEB Repository (stable) 和 (unstable)
 
       - name: Fetch release zips and unpack them
         run: |
