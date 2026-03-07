@@ -3,7 +3,6 @@ name: Deploy Repo and Firmware
 on:
   push:
     branches: [main]
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 permissions:
@@ -23,10 +22,7 @@ jobs:
 
       - name: Install required packages
         run: |
-          until sudo apt update
-          do
-            sleep 1
-          done
+          until sudo apt update; do sleep 1; done
           sudo apt install -y jq createrepo-c coreutils gnupg2 dpkg-dev
 
       - name: Insert environment variables
@@ -45,22 +41,11 @@ jobs:
         run: |
           gpg --list-keys
           echo "${{ steps.import_gpg.outputs.fingerprint }}"
+
       - name: Delete existing deb directory
-        run: |
-          rm -rf deb
+        run: rm -rf deb
 
-      - name: Build DEB Repository (stable)
-        run: |
-          export GPG_FINGERPRINT="${{ steps.import_gpg.outputs.fingerprint }}"
-          export ORIGIN="${{ steps.import_gpg.outputs.name }}"
-          .github/scripts/build_repo.sh
-
-      - name: Build DEB Repository (unstable)
-        run: |
-          export SUITE="unstable"
-          export GPG_FINGERPRINT="${{ steps.import_gpg.outputs.fingerprint }}"
-          export ORIGIN="${{ steps.import_gpg.outputs.name }}"
-          .github/scripts/build_repo.sh
+      # 这两步被删除：Build DEB Repository (stable) 和 (unstable)
 
       - name: Fetch release zips and unpack them
         run: |
